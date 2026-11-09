@@ -64,8 +64,9 @@ These commands are for Git Bash, macOS or Linux. In Windows PowerShell, use `Cop
 
 | When | Suite | Start it with |
 |---|---|---|
-| Every pull request | `smoke`: login, session, add to cart, a purchase; should be green | Automatic, or the Actions tab, or the first command below |
-| As a regression | `regression`: the whole suite | Actions tab, or the second command below |
+| Every pull request | `smoke`: login, session, add to cart, a purchase; should be green | Automatic: the **Playwright smoke** check |
+| A pull request with the `full-suite` label | `regression` as well: the whole suite, as a second check | Add the label: the **Playwright regression** check runs beside the smoke check |
+| By hand | `smoke` or `regression` | Actions tab, or the commands below |
 
 ```bash
 gh workflow run qa-pipeline.yml --ref <branch> -f suite=smoke
@@ -77,7 +78,7 @@ gh workflow run qa-pipeline.yml -f suite=regression
 
 **Green means nothing new.** Known defects are expected failures (see above), so the regression is green unless something new fails or a known defect passes. The run page shows a summary with the new failures, the known defects that passed, the flaky tests, and the known defects still failing grouped by issue.
 
-Each run keeps two artifacts for 14 days: `playwright-report` (the HTML report, with test passwords, session cookies and the sandbox address removed, and no traces) and `account-log` (the accounts it created, without passwords). Session cookies are also hidden in the run log. A full regression takes about 15 to 25 minutes on GitHub, a smoke run about 2. It retries an unexpected failure once; known defects don't retry, so retries add only a few accounts to the 100 or so each run creates.
+Each suite keeps two artifacts for 14 days: `playwright-report-<suite>` (the HTML report, with test passwords, session cookies and the sandbox address removed, and no traces) and `account-log-<suite>` (the accounts it created, without passwords). Session cookies are also hidden in the run log. A full regression takes about 15 to 25 minutes on GitHub, a smoke run about 2. It retries an unexpected failure once; known defects don't retry, so retries add only a few accounts to the 100 or so each run creates.
 
 **Runs that show it working** (2026-11-09, with known defects marked as expected failures):
 - [Smoke](https://github.com/Giomanconi/qa-marketplace-assessment/actions/runs/42551074580): green: login, session, add to cart and a purchase, then the account cleanup.
@@ -85,7 +86,7 @@ Each run keeps two artifacts for 14 days: `playwright-report` (the HTML report, 
 - The same suite locally: green, with the `tc-03` refresh test flaky (failed once, passed on retry; see the observation in [docs/development-notes/09](docs/development-notes/09-exploratory-sessions.md)).
 - Before known defects were marked, the last red regression had 46 failures: the 44 known ones plus 2 host timeouts.
 
-- **Automatic runs:** the `pull_request` trigger runs the smoke set; a new push cancels the run before it. The `schedule` trigger (a weekly regression) is written in the workflow, commented out; uncomment it to switch it on.
+- **Automatic runs:** the `pull_request` trigger runs the smoke set, plus the regression when the pull request has the `full-suite` label; a new push cancels the run before it, adding a label never does. The `schedule` trigger (a weekly regression) is written in the workflow, commented out; uncomment it to switch it on.
 - **Branch protection:** `main` only changes through a pull request, and cannot be force-pushed or deleted. The smoke check reports on each pull request but is not required, because docs-only pull requests skip it and would otherwise wait forever.
 - **No deployment step:** the sandbox is not ours to deploy, so this is CI for the tests, with no CD.
 
