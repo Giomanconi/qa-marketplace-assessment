@@ -23,8 +23,8 @@
 ## Environment and data
 
 - Chromium through Playwright, at desktop size; TC-10 also at 375, 768 and 1440 px.
-- Locally, or on GitHub Actions when started by hand (see "Pipeline" in the [README](../README.md)).
-- Synthetic data only: throwaway accounts with `example.com` emails, published test card numbers. Every account is [logged](08-test-accounts.md).
+- Locally, or on GitHub Actions when started by hand (see "Pipeline" in the [README](../../README.md)).
+- Synthetic data only: throwaway accounts with `example.com` emails, published test card numbers. Every account is [logged](../development-notes/08-test-accounts.md).
 
 ## Milestones
 
@@ -60,4 +60,4 @@
 
 ## Deliverables
 
-Test plan, strategy and report; [requirements map](02-requirements-map.md); [core](03-core-test-cases.md) and [GDPR](04-gdpr-test-cases.md) test cases; [session notes](09-exploratory-sessions.md); GitHub Issues on the [Project board](https://github.com/users/Giomanconi/projects/8); the Playwright suite and its on-demand pipeline.
+Test plan, strategy and report; [requirements map](../development-notes/02-requirements-map.md); [core](03-core-test-cases.md) and [GDPR](04-gdpr-test-cases.md) test cases; [session notes](../development-notes/09-exploratory-sessions.md); GitHub Issues on the [Project board](https://github.com/users/Giomanconi/projects/8); the Playwright suite and its on-demand pipeline.

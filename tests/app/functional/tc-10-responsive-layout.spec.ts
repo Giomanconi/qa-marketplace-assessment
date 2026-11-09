@@ -11,7 +11,7 @@ import {
  * TC-10 (usability): at 375, 768 and 1440 px the home page, catalogue, a product
  * page, the cart, checkout and account do not scroll sideways, and the main
  * action is on screen where a page has one. Overlap, clipped text and visible
- * keyboard focus need an eye, so they stay a manual check (docs/03).
+ * keyboard focus need an eye, so they stay a manual check (docs/qa-cycle/03).
  */
 test.describe('tc-10 responsive layout', () => {
     for (const viewport of VIEWPORTS) {

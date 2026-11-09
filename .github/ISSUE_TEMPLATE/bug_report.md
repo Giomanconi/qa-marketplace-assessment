@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Report a defect or discrepancy found during the QA cycle
-title: "[Area] Short symptom (expected vs actual)"
+title: "[Core or GDPR][Area] Short symptom (expected vs actual)"
 labels: bug
 assignees: ''
 ---
