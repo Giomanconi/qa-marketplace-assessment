@@ -86,7 +86,7 @@ Each run keeps two artifacts for 14 days: `playwright-report` (the HTML report, 
 - Before known defects were marked, the last red regression had 46 failures: the 44 known ones plus 2 host timeouts.
 
 - **Automatic runs:** the `pull_request` trigger runs the smoke set; a new push cancels the run before it. The `schedule` trigger (a weekly regression) is written in the workflow, commented out; uncomment it to switch it on.
-- **Blocking merges:** branch protection needs a public repo or GitHub Pro. Without it the check reports on each pull request but cannot block the merge.
+- **Branch protection:** `main` only changes through a pull request, and cannot be force-pushed or deleted. The smoke check reports on each pull request but is not required, because docs-only pull requests skip it and would otherwise wait forever.
 - **No deployment step:** the sandbox is not ours to deploy, so this is CI for the tests, with no CD.
 
 ## Status

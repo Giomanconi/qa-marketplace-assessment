@@ -14,7 +14,7 @@ How findings become issues and move across the [Project board](https://github.co
 
 They were created once with `gh label create <name> --color <hex> --force`. Severity and priority are defined in the [strategy](../qa-cycle/01-test-strategy.md).
 
-**Title:** `[Area] Specific symptom (expected against actual)`, for example `[Legal] /terms returns 404; Terms of Service unreachable`.
+**Title:** `[Core or GDPR][Area] Specific symptom (expected against actual)`. `[GDPR]` marks the issues labelled `gdpr` (and the GDPR task ticket), `[Core]` everything else, so the two lists separate at a glance. For example `[Core][Checkout] Express shipping charged $14.99 instead of $9.99` or `[GDPR][Legal] /terms returns 404; Terms of Service unreachable`.
 
 ## Lifecycle
 
