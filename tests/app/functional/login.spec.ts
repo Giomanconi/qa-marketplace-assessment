@@ -29,7 +29,7 @@ test.describe('login form', () => {
                 await expect(appPage.nav.accountLink).toBeVisible({
                     timeout: appConfig.loginOutcomeTimeout,
                 });
-                await expect(appPage.nav.signInLink).toBeVisible();
+                await expect(appPage.nav.signInLink).toBeHidden();
             });
         }
     );
