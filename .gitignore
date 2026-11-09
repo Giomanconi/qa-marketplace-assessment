@@ -1,0 +1,20 @@
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+reports/
+dist/
+*.tsbuildinfo
+*.log
+.DS_Store
+
+# Test accounts and browser sessions, never committed
+.auth/
+
+# Environment files, only the example is committed
+env/.env.*
+!env/.env.example
+.env
+.env.*
+!.env.example

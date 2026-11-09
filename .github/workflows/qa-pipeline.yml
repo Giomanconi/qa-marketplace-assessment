@@ -1,0 +1,141 @@
+# QA pipeline: runs the Playwright suite against the sandbox.
+#
+# The smoke set runs on every pull request that changes code or tests (docs
+# only changes skip it). The regression only runs when someone starts it
+# (Actions tab, or gh workflow run), because every run leaves soft-deleted
+# accounts and shops in the company's sandbox.
+#   smoke:      4 tests that should be green. Also the pull request check.
+#   regression: the whole suite. Known defects are marked with test.fail(), so
+#               it is green unless something new fails or a known defect stops
+#               failing; see "Pipeline" in the README.
+# The run page shows a summary of the results (scripts/ci-summary.js).
+#
+# One secret: the suite creates its own throwaway users and needs only APP_URL.
+# It is a secret, not a variable, so GitHub hides the sandbox address in the logs.
+# .auth/ holds their passwords and is never uploaded.
+# Passwords and session cookies are removed from the log and the HTML report,
+# and the sandbox address from the report and the run summary.
+name: QA Pipeline
+
+on:
+    workflow_dispatch:
+        inputs:
+            suite:
+                description: Which tests to run
+                type: choice
+                options:
+                    - smoke
+                    - regression
+                default: smoke
+    # Pull requests run the smoke set (inputs.suite is empty there).
+    pull_request:
+        branches: [main]
+        paths-ignore: ['docs/**', 'evidence/**', '**.md']
+    # To run the regression weekly (Mondays 06:00 UTC), uncomment and set the
+    # suite below to regression for this event:
+    # schedule:
+    #     - cron: '0 6 * * 1'
+
+permissions:
+    contents: read
+
+# A new push to a pull request cancels the run before it: fewer test accounts.
+concurrency:
+    group: qa-pipeline-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: true
+
+env:
+    APP_URL: ${{ secrets.APP_URL }}
+    SEED_MAIN: '0'
+    HIDE_COOKIE: 's/mp_session=[^; "]+/mp_session=***/g'
+
+jobs:
+    static:
+        name: Lint and type check
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - run: npm ci
+
+            - run: npm run lint
+
+            - run: npx tsc --noEmit
+
+            - name: Every test loads
+              run: npx playwright test --list
+
+    tests:
+        name: Playwright tests
+        needs: static
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - run: npm ci
+
+            - run: npx playwright install --with-deps chromium
+
+            # One retry (from the config): known defects are expected to fail and
+            # do not retry, so only a new failure costs an extra account. The sed
+            # hides session cookies that a failed API call prints in the log.
+            - name: Run the suite
+              shell: bash
+              env:
+                  SUITE: ${{ inputs.suite }}
+              run: |
+                  if [ "$SUITE" = "regression" ]; then
+                    npx playwright test --trace=off 2>&1 | sed -u -E "$HIDE_COOKIE"
+                  else
+                    npm run test:smoke -- --trace=off 2>&1 | sed -u -E "$HIDE_COOKIE"
+                  fi
+
+            - name: Results summary
+              if: always()
+              run: node scripts/ci-summary.js reports/results.json
+
+            - name: Delete accounts a crashed run left behind
+              if: always()
+              shell: bash
+              # Its own reporter: the default would overwrite the suite's reports
+              run: npm run cleanup:accounts -- --reporter=list 2>&1 | sed -u -E "$HIDE_COOKIE"
+
+            - name: Write the account log, without passwords
+              if: always()
+              run: |
+                  node scripts/accounts-report.js --no-passwords
+                  if [ -f reports/account-log.md ] && grep -q 'Pw-' reports/account-log.md; then
+                    echo "The account log holds a password"
+                    exit 1
+                  fi
+
+            - name: Remove passwords, cookies and the sandbox address from the report
+              id: scrub
+              if: always()
+              run: python3 scripts/scrub-report.py playwright-report
+
+            - uses: actions/upload-artifact@v7
+              if: always() && steps.scrub.outcome == 'success'
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 14
+
+            - uses: actions/upload-artifact@v7
+              if: always()
+              with:
+                  name: account-log
+                  path: reports/account-log.md
+                  retention-days: 14
