@@ -1,5 +1,5 @@
 /**
- * Pricing oracles copied from the assessment test cases (docs/03). The
+ * Pricing oracles copied from the assessment test cases (docs/qa-cycle/03). The
  * expected values come from the Help Center rules, never from the app's own
  * answers. Amounts are in dollars.
  */

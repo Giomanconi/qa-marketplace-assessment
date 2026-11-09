@@ -124,5 +124,5 @@ test.describe('tc-01 order total', () => {
     );
 });
 
-// Items $50.00 - $5.00 discount + $9.99 Express + $3.60 tax (docs/03, TC-01 variation)
+// Items $50.00 - $5.00 discount + $9.99 Express + $3.60 tax (docs/qa-cycle/03, TC-01 variation)
 const EXPRESS_TOTAL = 58.59;
