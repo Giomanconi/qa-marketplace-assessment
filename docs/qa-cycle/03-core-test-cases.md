@@ -2,7 +2,7 @@
 
 A deliberately small set, chosen so every one can be executed, explained and defended in the interview. They are spread across the four severity levels (3 / 3 / 2 / 2). GDPR is covered by its own list in [04-gdpr-test-cases.md](04-gdpr-test-cases.md).
 
-**Severity** = impact **if the test fails** (see the model in the [strategy](01-test-strategy.md#15-severity-and-priority)). **Priority** = how early it is run and how urgently a failure must be fixed.
+**Severity** = impact **if the test fails** (see the model in the [strategy](01-test-strategy.md#severity-and-priority)). **Priority** = how early it is run and how urgently a failure must be fixed.
 
 ## Overview
 
@@ -293,14 +293,14 @@ Automated run of 2026-11-05 and 2026-11-06 (Playwright, spec per test case). "PA
 |----|------|--------|-------|
 | TC-01 | `tests/app/e2e/tc-01-order-total.spec.ts` | FAIL: worked example (tax on the full subtotal) and the Express variation | #2, #3 |
 | TC-02 | `tests/app/e2e/tc-02-cancel-order.spec.ts` | FAIL: Processing cancel and refund amount pass; stock is not restored; a Shipped order can be cancelled (button and API) | #9, #8 |
-| TC-03 | `tests/app/e2e/tc-03-declined-card-double-submit.spec.ts` | FAIL: declined card passes; refresh/back passes unless the confirmation page gets no answer (intermittent, see [docs/09](09-exploratory-sessions.md#observations-not-filed)); a double click creates two orders; an unsupported card brand is charged | #10, #11 |
+| TC-03 | `tests/app/e2e/tc-03-declined-card-double-submit.spec.ts` | FAIL: declined card passes; refresh/back passes unless the confirmation page gets no answer (intermittent, see [docs/development-notes/09](../development-notes/09-exploratory-sessions.md#observations-not-filed)); a double click creates two orders; an unsupported card brand is charged | #10, #11 |
 | TC-04 | `tests/app/functional/tc-04-coupon-rules.spec.ts` | FAIL: cases a, b, c, d and f pass; case e (SAVE20 stays after the subtotal drops below $100) fails | #7 |
 | TC-05 | `tests/app/functional/tc-05-free-shipping-threshold.spec.ts` | FAIL: cases a, c, d (consistent) and f pass; case b ($50.00 is not free) and case e (Express $14.99) fail | #6, #3 |
 | TC-06 | `tests/app/functional/tc-06-seller-fee-earnings.spec.ts` | FAIL: fee is $4.92 instead of $4.00; the hub counts the cancelled order | #12, #13 |
 | TC-07 | `tests/app/functional/tc-07-search-filters.spec.ts` | FAIL: search order/case, out-of-stock and odd inputs pass; price sort uses the original price | report |
 | TC-08 | `tests/app/api/tc-08-registration-validation.spec.ts` | FAIL: cases b, c, d pass; a 7-character password and the same email in another case are accepted | #14, #15 |
 | TC-09 | `tests/app/functional/tc-09-cart-badge.spec.ts` | FAIL: the badge counts lines (2) instead of total quantity (3) | report |
-| TC-10 | `tests/app/functional/tc-10-responsive-layout.spec.ts` | PARTIAL: at 375, 768 and 1440 px the home page, catalogue, a product, the cart, checkout and account do not scroll sideways, and the search box, Add to cart, Checkout and Place order are visible, except that at 375 px a cart with an item is 50 px wider than the screen and the catalogue is 21 px wider once its pagination row has loaded (the check waits for that row; before that change it passed by measuring too early). Manual look at 375 and 768 px (see [09](09-exploratory-sessions.md)): the cart is 56 px too wide and the checkout 23 px too wide on a phone with an ordinary product title (the spec's short title hides the checkout case), the catalogue pagination row is clipped, and keyboard focus is visible; nothing is unreachable. Not looked at: contrast and screen readers. | report |
+| TC-10 | `tests/app/functional/tc-10-responsive-layout.spec.ts` | PARTIAL: at 375, 768 and 1440 px the home page, catalogue, a product, the cart, checkout and account do not scroll sideways, and the search box, Add to cart, Checkout and Place order are visible, except that at 375 px a cart with an item is 50 px wider than the screen and the catalogue is 21 px wider once its pagination row has loaded (the check waits for that row; before that change it passed by measuring too early). Manual look at 375 and 768 px (see [09](../development-notes/09-exploratory-sessions.md)): the cart is 56 px too wide and the checkout 23 px too wide on a phone with an ordinary product title (the spec's short title hides the checkout case), the catalogue pagination row is clipped, and keyboard focus is visible; nothing is unreachable. Not looked at: contrast and screen readers. | report |
 | TC-11 | `tests/app/functional/tc-11-express-shipping.spec.ts` | FAIL in all 7 cases ($30 to $109, with and without coupon): option $9.99, summary $14.99 | #3 |
 | TC-12 | `tests/app/functional/tc-12-tax-base.spec.ts` | FAIL in 4 of 4 coupon cases (b, c, d, e); case a and removing the coupon pass | #2 |
 | TC-13 | `tests/app/functional/tc-13-zip-error-message.spec.ts` | FAIL: invalid ZIP shows "Enter a valid phone number." | #4 |
@@ -312,4 +312,4 @@ The first manual run (2026-11-04) found TC-11 case f and TC-12 case c failing; t
 - **Money first.** Totals, refunds, coupons, shipping thresholds and seller fees are where defects cost the business most, and the Help Center gives exact numbers that act as test oracles.
 - **State and authority.** Cancellation and payment are state machines with a server-side rule that the UI alone cannot guarantee.
 - **Sampling lower tiers.** Search, validation, the cart badge and responsiveness represent common medium/low-impact defect classes without bloating the set.
-- **Not included as test cases on purpose:** reviews, returns, address management and extra seller and cart rules were covered by two [exploratory sessions](09-exploratory-sessions.md) instead, and filed only when the finding was strong (#25, #26); profile edits are in GDPR-05.
+- **Not included as test cases on purpose:** reviews, returns, address management and extra seller and cart rules were covered by two [exploratory sessions](../development-notes/09-exploratory-sessions.md) instead, and filed only when the finding was strong (#25, #26); profile edits are in GDPR-05.

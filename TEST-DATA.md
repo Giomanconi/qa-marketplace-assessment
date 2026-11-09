@@ -8,7 +8,7 @@ How the tests get their data. Short on purpose: this is an MVP.
 2. **Every test creates its own data through the API first** (users, shops, products, cart), then uses the UI only for what it is testing.
 3. **Workers never share data.** Account fixtures are worker-scoped (one seller and one buyer per worker slot, kept when a worker restarts after a failed test and deleted at the end of the run); anything a single test needs is test-scoped.
 4. **Everything created is deleted** when its fixture ends (the app only soft-deletes accounts, see the GDPR section). Leftovers of a crashed run are removed with `npm run cleanup:accounts`.
-5. **Every account is recorded.** Creating and deleting an account appends a line to `.auth/account-registry.jsonl` (gitignored, includes the synthetic password); `npm run accounts:report` prints the table. See [docs/08](docs/08-test-accounts.md).
+5. **Every account is recorded.** Creating and deleting an account appends a line to `.auth/account-registry.jsonl` (gitignored, includes the synthetic password); `npm run accounts:report` prints the table. See [docs/development-notes/08](docs/development-notes/08-test-accounts.md).
 
 ## Where things live
 

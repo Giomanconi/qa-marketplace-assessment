@@ -26,7 +26,7 @@ Customers can be charged the wrong amount or twice, anyone can read sellers' per
 
 Counts are automated tests, without the two setup steps. A failed test is a defect found, not a broken suite: 45 map to an issue or an observation, and 2 are host failures in this run (TC-02 cancel, which passed on rerun, and TC-03 refresh, see Concern). Failed includes the `/terms` test, which Playwright reports as an expected failure.
 
-Against the [requirements map](02-requirements-map.md), 60 of 65 rules have a result.
+Against the [requirements map](../development-notes/02-requirements-map.md), 60 of 65 rules have a result.
 
 ## Exit criteria
 
@@ -42,13 +42,13 @@ Against the [requirements map](02-requirements-map.md), 60 of 65 rules have a re
 - Money is wrong in checkout: Express price, tax base and the seller fee all fail, so checkout has the lowest pass rate.
 - Personal data is exposed to signed-out visitors, and erasure does not erase.
 - Not tested: 5 rules (RET-3, RET-4, CPN-6, CPN-7, SELL-4 on its own). Accessibility and security had light checks only.
-- After a successful payment, the server sometimes never answers the order confirmation page: the order exists, but checkout stays on "Processing payment…", so a customer could pay again. It cannot yet be told apart from the host's deliberate failures, so it is an [observation](09-exploratory-sessions.md#observations-not-filed), not an issue.
+- After a successful payment, the server sometimes never answers the order confirmation page: the order exists, but checkout stays on "Processing payment…", so a customer could pay again. It cannot yet be told apart from the host's deliberate failures, so it is an [observation](../development-notes/09-exploratory-sessions.md#observations-not-filed), not an issue.
 - Results can vary slightly: the host fails requests on purpose, and the double-click bug is a race. Expect 44 to 46 failures per run, plus the expected `/terms` failure.
 - These figures come from the run before known defects were marked with `test.fail()`. From then on, a run reports the known defects as expected failures, and only new failures, or known defects that pass, turn it red (see "Pipeline" in the README).
 
 ## What works
 
-Coupon rules, declined cards, the order status flow, review eligibility, access control between users, and no trackers before consent. Full list in the [session log](09-exploratory-sessions.md).
+Coupon rules, declined cards, the order status flow, review eligibility, access control between users, and no trackers before consent. Full list in the [session log](../development-notes/09-exploratory-sessions.md).
 
 ## Next target
 
@@ -85,8 +85,8 @@ Coupon rules, declined cards, the order status flow, review eligibility, access 
 - [#25](https://github.com/Giomanconi/qa-marketplace-assessment/issues/25): Draft products listed in public search
 - [#26](https://github.com/Giomanconi/qa-marketplace-assessment/issues/26): Sale badge shows the wrong percentage
 
-Also open: 4 P3 issues, and 13 rows of [observations not filed](09-exploratory-sessions.md#observations-not-filed).
+Also open: 4 P3 issues, and 13 rows of [observations not filed](../development-notes/09-exploratory-sessions.md#observations-not-filed).
 
 ## Details
 
-[Test plan](00-test-plan.md), [strategy](01-test-strategy.md), [core](03-core-test-cases.md) and [GDPR](04-gdpr-test-cases.md) test cases with results, [session log and limits](09-exploratory-sessions.md), [evidence](../evidence/).
+[Test plan](00-test-plan.md), [strategy](01-test-strategy.md), [core](03-core-test-cases.md) and [GDPR](04-gdpr-test-cases.md) test cases with results, [session log and limits](../development-notes/09-exploratory-sessions.md), [evidence](../../evidence/).
