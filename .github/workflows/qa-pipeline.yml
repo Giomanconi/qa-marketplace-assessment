@@ -5,6 +5,8 @@
 # (Actions tab, or gh workflow run), because every run leaves soft-deleted
 # accounts and shops in the company's sandbox.
 #   smoke:      4 tests that should be green. Also the pull request check.
+#   regression: on a pull request too, when it carries the `full-suite` label,
+#               as a second check beside the smoke check.
 #   regression: the whole suite. Known defects are marked with test.fail(), so
 #               it is green unless something new fails or a known defect stops
 #               failing; see "Pipeline" in the README.
@@ -27,9 +29,11 @@ on:
                     - smoke
                     - regression
                 default: smoke
-    # Pull requests run the smoke set (inputs.suite is empty there).
+    # Pull requests run the smoke set; with the `full-suite` label they also run
+    # the regression, as a second check. Adding the label starts both.
     pull_request:
         branches: [main]
+        types: [opened, synchronize, reopened, labeled]
         paths-ignore: ['docs/**', 'evidence/**', '**.md']
     # To run the regression weekly (Mondays 06:00 UTC), uncomment and set the
     # suite below to regression for this event:
@@ -40,8 +44,9 @@ permissions:
     contents: read
 
 # A new push to a pull request cancels the run before it: fewer test accounts.
+# Adding a label is not a new push, so it never cancels a running check.
 concurrency:
-    group: qa-pipeline-${{ github.event.pull_request.number || github.run_id }}
+    group: qa-pipeline-${{ github.event.pull_request.number || github.run_id }}-${{ github.event.action == 'labeled' && 'label' || 'push' }}
     cancel-in-progress: true
 
 env:
@@ -72,10 +77,18 @@ jobs:
               run: npx playwright test --list
 
     tests:
-        name: Playwright tests
+        name: Playwright ${{ matrix.suite }}
         needs: static
+        # Labels other than full-suite start nothing new.
+        if: github.event.action != 'labeled' || github.event.label.name == 'full-suite'
         runs-on: ubuntu-latest
         timeout-minutes: 45
+        strategy:
+            fail-fast: false
+            matrix:
+                # By hand: the chosen suite. Pull request: smoke, plus the
+                # regression when the PR has the full-suite label.
+                suite: ${{ fromJSON(github.event_name == 'workflow_dispatch' && format('["{0}"]', inputs.suite) || (contains(github.event.pull_request.labels.*.name, 'full-suite') && '["smoke", "regression"]') || '["smoke"]') }}
         steps:
             - uses: actions/checkout@v7
 
@@ -94,7 +107,7 @@ jobs:
             - name: Run the suite
               shell: bash
               env:
-                  SUITE: ${{ inputs.suite }}
+                  SUITE: ${{ matrix.suite }}
               run: |
                   if [ "$SUITE" = "regression" ]; then
                     npx playwright test --trace=off 2>&1 | sed -u -E "$HIDE_COOKIE"
@@ -129,13 +142,13 @@ jobs:
             - uses: actions/upload-artifact@v7
               if: always() && steps.scrub.outcome == 'success'
               with:
-                  name: playwright-report
+                  name: playwright-report-${{ matrix.suite }}
                   path: playwright-report/
                   retention-days: 14
 
             - uses: actions/upload-artifact@v7
               if: always()
               with:
-                  name: account-log
+                  name: account-log-${{ matrix.suite }}
                   path: reports/account-log.md
                   retention-days: 14

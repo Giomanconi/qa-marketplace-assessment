@@ -9,7 +9,7 @@ Every account is synthetic: a unique `qa-<id>@example.com` email (a reserved dom
 | Every create and delete, with the password | `.auth/account-registry.jsonl`, written by `helpers/api/accounts.ts` | no |
 | Readable table of that log | `npm run accounts:report` | no |
 | Accounts that still exist (crash safety net) | `.auth/accounts/`, cleared by `npm run cleanup:accounts` | no |
-| Pipeline runs | the `account-log` artifact of each run, without passwords, kept 14 days | no |
+| Pipeline runs | the `account-log-<suite>` artifact of each run, without passwords, kept 14 days | no |
 | Leftover accounts, emails only | this document | yes |
 
 A full run creates about 100 accounts (one user for most tests, plus a seller and a buyer per worker) and deletes them all at the end. The main account in `env/.env.dev` belongs to the tester: no test uses it, only the additive `seed:main` script.
