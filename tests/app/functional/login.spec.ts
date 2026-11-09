@@ -12,6 +12,7 @@ const ERROR_MESSAGES: Record<
 };
 
 test.describe('login form', () => {
+    // Demo PR: a code change, so the smoke check runs on this pull request.
     test.beforeEach(async ({ appPage }) => {
         await appPage.openLoginPage();
     });
